@@ -6,6 +6,7 @@
   --shadow: rgba(0, 0, 0, 0.6);
 }
 
+/* Rainbow colored notes for background pattern */
 html, body {
   height: 100%;
   margin: 0;
@@ -21,16 +22,23 @@ html, body {
   position: relative;
 }
 
-/* Flowing musical notes overlay for smooth vibe */
+/* Flowing multi-color musical notes overlay for smooth vibe */
 body::before {
   content: "";
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: url("data:image/svg+xml;utf8,<svg fill='%23008080' opacity='0.08' height='64' viewBox='0 0 24 24' width='64' xmlns='http://www.w3.org/2000/svg'><path d='M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z'/></svg>") repeat;
+  background-image:
+    radial-gradient(circle at 20% 20%, #ff3c3c 15%, transparent 16%),
+    radial-gradient(circle at 80% 20%, #ff9f3c 15%, transparent 16%),
+    radial-gradient(circle at 50% 50%, #fffc3c 15%, transparent 16%),
+    radial-gradient(circle at 20% 80%, #3cff6f 15%, transparent 16%),
+    radial-gradient(circle at 80% 80%, #3c8cff 15%, transparent 16%);
+  background-repeat: repeat;
   background-size: 64px 64px;
   animation: flow 60s linear infinite;
   pointer-events: none;
   z-index: 0;
+  opacity: 0.08;
 }
 
 @keyframes flow {
@@ -89,10 +97,6 @@ body::before {
   color: var(--accent);
   user-select: none;
   pointer-events: none;
-}
-
-#file-input {
-  display: none;
 }
 
 .mail-slot {
@@ -163,41 +167,6 @@ body::before {
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
 }
 
-/* Video preview style */
-#camera-preview {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  width: 180px;
-  height: auto;
-  border: 3px solid var(--accent);
-  border-radius: 12px;
-  z-index: 10000;
-  background: black;
-}
-
-/* Close camera button */
-#close-camera {
-  position: fixed;
-  top: 10px;
-  right: 200px;
-  z-index: 10001;
-  background: var(--accent);
-  color: #121212;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  user-select: none;
-}
-
-footer {
-  margin-top: 3rem;
-  font-size: 0.85rem;
-  color: var(--primary);
-  user-select: none;
-}
-
 /* Responsive */
 @media screen and (max-width: 600px) {
   .container {
@@ -230,13 +199,5 @@ footer {
   .fold-pdf {
     width: 60px;
     height: 80px;
-  }
-
-  #camera-preview {
-    width: 140px;
-  }
-
-  #close-camera {
-    right: 160px;
   }
 }
