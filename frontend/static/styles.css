@@ -1,62 +1,242 @@
-/* static/styles.css */
+:root {
+  --primary: #eaeaea;
+  --accent: #008080;
+  --background-dark: #121212;
+  --background-light: #1f1f1f;
+  --shadow: rgba(0, 0, 0, 0.6);
+}
 
-body {
-  height: 100vh;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--background-dark);
+  color: var(--primary);
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: linear-gradient(to bottom, #000000, #1a1a1a);
-  background-image: url('https://www.transparenttextures.com/patterns/notes.png');
-  background-size: cover;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  justify-content: center;
+  overflow-x: hidden;
+  user-select: none;
+  position: relative;
+}
+
+/* Flowing musical notes overlay for smooth vibe */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml;utf8,<svg fill='%23008080' opacity='0.08' height='64' viewBox='0 0 24 24' width='64' xmlns='http://www.w3.org/2000/svg'><path d='M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z'/></svg>") repeat;
+  background-size: 64px 64px;
+  animation: flow 60s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes flow {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 640px; }
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  gap: 4rem;
+  padding: 2rem 4rem;
+  background: var(--background-light);
+  border-radius: 20px;
+  box-shadow: 0 12px 25px var(--shadow);
+  width: 320px;
+  user-select: none;
 }
 
-.camera-button, .upload-button {
+.camera-controls {
+  display: flex;
+  gap: 20px;
+}
+
+.camera-button,
+.upload-button {
+  background: transparent;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+  position: relative;
 }
 
-.camera-button {
-  width: 120px;
-  height: 120px;
-  background-color: #ffffff;
-  border: 4px solid #e0e0e0;
-  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+.camera-button:hover,
+.upload-button:hover {
+  background-color: var(--accent);
+  box-shadow: 0 8px 15px var(--accent);
+  transform: scale(1.1);
 }
 
-.camera-icon {
-  width: 40px;
-  height: 40px;
-  background: url('https://img.icons8.com/ios-filled/50/000000/camera.png') no-repeat center;
-  background-size: contain;
-}
-
-.upload-button {
-  width: 60px;
-  height: 60px;
-  background-color: #cccccc;
-  border: 3px solid #888888;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-}
-
+.camera-icon,
 .upload-icon {
-  width: 24px;
-  height: 24px;
-  background: url('https://img.icons8.com/ios-filled/50/000000/upload.png') no-repeat center;
-  background-size: contain;
+  font-size: 56px;
+  color: var(--accent);
+  user-select: none;
+  pointer-events: none;
 }
 
 #file-input {
   display: none;
+}
+
+.mail-slot {
+  width: 260px;
+  height: 40px;
+  background: #292929;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px #555;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  user-select: none;
+}
+
+.mail-slot::before {
+  content: 'MIDI Output';
+  position: absolute;
+  top: -26px;
+  font-size: 0.9rem;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.mail-slot.glow {
+  box-shadow:
+    0 0 20px 5px var(--accent),
+    inset 0 0 15px var(--accent);
+  transition: box-shadow 0.4s ease;
+}
+
+/* Folding animation */
+@keyframes foldAndDrop {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotateX(0deg) rotateY(0deg) scale(1) skew(0deg, 0deg);
+  }
+  40% {
+    transform: rotateX(75deg) rotateY(0deg) scale(0.85) skew(10deg, 0deg);
+    opacity: 0.9;
+  }
+  70% {
+    transform: rotateX(75deg) rotateY(180deg) scale(0.5) skew(5deg, 0deg);
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 140px) rotateX(720deg) rotateY(540deg) scale(0.3) skew(0deg, 0deg);
+  }
+}
+
+.fold-pdf {
+  position: absolute;
+  width: 80px;
+  height: 100px;
+  background: linear-gradient(135deg, #eee, #ccc);
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transform-origin: center bottom;
+  animation: foldAndDrop 1.6s ease forwards;
+  user-select: none;
+  pointer-events: none;
+  z-index: 9999;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+}
+
+/* Video preview style */
+#camera-preview {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 180px;
+  height: auto;
+  border: 3px solid var(--accent);
+  border-radius: 12px;
+  z-index: 10000;
+  background: black;
+}
+
+/* Close camera button */
+#close-camera {
+  position: fixed;
+  top: 10px;
+  right: 200px;
+  z-index: 10001;
+  background: var(--accent);
+  color: #121212;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+footer {
+  margin-top: 3rem;
+  font-size: 0.85rem;
+  color: var(--primary);
+  user-select: none;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .container {
+    gap: 3rem;
+    width: 260px;
+    padding: 1.5rem 3rem;
+  }
+
+  .camera-button,
+  .upload-button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .camera-icon,
+  .upload-icon {
+    font-size: 48px;
+  }
+
+  .mail-slot {
+    width: 200px;
+    height: 30px;
+  }
+
+  .mail-slot::before {
+    top: -22px;
+    font-size: 0.8rem;
+  }
+
+  .fold-pdf {
+    width: 60px;
+    height: 80px;
+  }
+
+  #camera-preview {
+    width: 140px;
+  }
+
+  #close-camera {
+    right: 160px;
+  }
 }

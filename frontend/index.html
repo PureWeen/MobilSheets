@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>MobilSheets - Sheet Music to MIDI</title>
+
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="static/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <button class="camera-button" onclick="handleCameraClick()" aria-label="Open camera">
+      <span class="material-icons camera-icon">photo_camera</span>
+    </button>
+
+    <label for="file-input" class="upload-button" aria-label="Upload file">
+      <span class="material-icons upload-icon">insert_drive_file</span>
+    </label>
+    <input
+      type="file"
+      id="file-input"
+      accept="image/*,.pdf"
+      onchange="handleFileUpload(this.files[0])"
+    />
+
+    <div id="mail-slot" class="mail-slot"></div>
+  </div>
+
+  <footer>© 2025 MobilSheets</footer>
+
+  <!-- Paper folding / chirping crunch sound -->
+  <audio id="paper-sound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_c7c9ffefb0.mp3?filename=paper-crumpling-1480.mp3" preload="auto"></audio>
+
+  <script src="scripts/main.js" defer></script>
+</body>
+</html>
