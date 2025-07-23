@@ -1,0 +1,62 @@
+/* static/styles.css */
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #000000, #1a1a1a);
+  background-image: url('https://www.transparenttextures.com/patterns/notes.png');
+  background-size: cover;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.camera-button, .upload-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.camera-button {
+  width: 120px;
+  height: 120px;
+  background-color: #ffffff;
+  border: 4px solid #e0e0e0;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+}
+
+.camera-icon {
+  width: 40px;
+  height: 40px;
+  background: url('https://img.icons8.com/ios-filled/50/000000/camera.png') no-repeat center;
+  background-size: contain;
+}
+
+.upload-button {
+  width: 60px;
+  height: 60px;
+  background-color: #cccccc;
+  border: 3px solid #888888;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+.upload-icon {
+  width: 24px;
+  height: 24px;
+  background: url('https://img.icons8.com/ios-filled/50/000000/upload.png') no-repeat center;
+  background-size: contain;
+}
+
+#file-input {
+  display: none;
+}
