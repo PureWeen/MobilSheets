@@ -1,0 +1,5 @@
+oemer
+music21
+Flask
+git+https://github.com/BreezeWhite/oemer.git
+flask-cors
