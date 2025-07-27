@@ -1,5 +1,7 @@
+flask==2.3.3
+flask-cors==4.0.0
+music21==6.3.0
+onnxruntime==1.15.1
+Pillow==10.2.0
+numpy==1.23.5
 oemer
-music21
-Flask
-git+https://github.com/BreezeWhite/oemer.git
-flask-cors
