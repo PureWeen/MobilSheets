@@ -7,6 +7,46 @@ function isMobile() {
 
 useFrontCamera = !isMobile();
 
+const backendURL = 'http://localhost:5000/convert-sync';
+
+function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  // Show loading state
+  const mailSlot = document.getElementById('mail-slot');
+  const originalText = mailSlot.textContent;
+  mailSlot.textContent = 'Processing...';
+
+  fetch(backendURL, {
+    method: "POST",
+    body: formData
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.blob();
+  })
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "converted.mid";
+    a.click();
+    
+    // Reset mail slot
+    mailSlot.textContent = originalText;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to convert image. Please try again.');
+    
+    // Reset mail slot
+    mailSlot.textContent = originalText;
+  });
+}
+
 async function openCamera() {
   try {
     if (currentStream) stopCamera();
@@ -83,11 +123,8 @@ function handleFileUpload(file) {
   const uploadBtn = document.querySelector('.upload-button');
   animateFoldFromButton(uploadBtn);
 
-  if (file.type === 'application/pdf') {
-    // no extra animation needed, fold is already done above
-  } else {
-    // For images, the mail slot glow is handled in animation end callback
-  }
+  // Upload the file for conversion
+  uploadImage(file);
 }
 
 function capturePhoto() {
@@ -110,7 +147,14 @@ function capturePhoto() {
   const cameraBtn = document.getElementById('camera-btn');
   animateFoldFromButton(cameraBtn);
 
-  // Here you can handle canvas.toDataURL() for upload if needed
+  // Convert canvas to blob and upload
+  canvas.toBlob((blob) => {
+    if (blob) {
+      // Create a file from the blob
+      const file = new File([blob], 'camera-capture.png', { type: 'image/png' });
+      uploadImage(file);
+    }
+  }, 'image/png');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
