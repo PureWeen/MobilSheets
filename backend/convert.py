@@ -31,6 +31,8 @@ def create_test_midi(output_path):
     score.append(part)
     score.write('midi', fp=output_path)
     return output_path
+
+def validate_image(image_path):
     """Validate that the input file is a valid image."""
     try:
         with Image.open(image_path) as img:
