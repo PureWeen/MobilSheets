@@ -1,40 +1,157 @@
 import os
 import subprocess
+import logging
+import tempfile
+from pathlib import Path
 from music21 import converter
+from PIL import Image
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def create_test_midi(output_path):
+    """Create a simple test MIDI file for testing purposes."""
+    from music21 import stream, note, meter, tempo
+    
+    # Create a simple musical score
+    score = stream.Score()
+    part = stream.Part()
+    
+    # Add basic music elements
+    part.append(meter.TimeSignature('4/4'))
+    part.append(tempo.TempoIndication(number=120))
+    
+    # Add some simple notes
+    notes_data = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5']
+    for note_name in notes_data:
+        n = note.Note(note_name, quarterLength=1)
+        part.append(n)
+    
+    score.append(part)
+    score.write('midi', fp=output_path)
+    return output_path
+    """Validate that the input file is a valid image."""
+    try:
+        with Image.open(image_path) as img:
+            img.verify()
+        logger.info(f"Image validation successful: {image_path}")
+        return True
+    except Exception as e:
+        logger.error(f"Image validation failed: {e}")
+        return False
 
 def convert_to_midi(input_path):
-    # Step 1: Prepare output folder
+    """
+    Convert an image of sheet music to a MIDI file using Oemer and music21.
+    
+    Args:
+        input_path (str): Path to the input image file
+        
+    Returns:
+        str: Path to the generated MIDI file
+        
+    Raises:
+        ValueError: If the input image is invalid
+        RuntimeError: If Oemer processing fails
+        FileNotFoundError: If no MusicXML file is generated
+        Exception: For other processing errors
+    """
+    logger.info(f"Starting conversion for: {input_path}")
+    
+    # Step 1: Validate input image
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input file not found: {input_path}")
+        
+    if not validate_image(input_path):
+        raise ValueError(f"Invalid image file: {input_path}")
+
+    # Step 2: Prepare output folder
     output_dir = "outputs"
     os.makedirs(output_dir, exist_ok=True)
+    logger.info(f"Output directory prepared: {output_dir}")
 
-    # Step 2: Set environment to disable GPU (this is the key fix)
+    # Step 3: Set environment to disable GPU and configure ONNX
     env = os.environ.copy()
     env["ORT_DISABLE_GPU"] = "1"
+    env["OMP_NUM_THREADS"] = "1"  # Limit CPU threads for stability
+    
+    logger.info("Running Oemer OCR processing...")
 
-    # Step 3: Run Oemer CLI with environment override
-    result = subprocess.run(
-        ["oemer", input_path, "-o", output_dir],
-        capture_output=True,
-        text=True,
-        env=env  # 👈 Important
-    )
+    # Step 4: Run Oemer CLI with timeout and environment override
+    try:
+        result = subprocess.run(
+            ["oemer", input_path, "-o", output_dir],
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=600  # 10 minute timeout
+        )
+        
+        logger.info(f"Oemer process completed with return code: {result.returncode}")
+        
+        if result.returncode != 0:
+            error_msg = f"Oemer processing failed with exit code {result.returncode}"
+            if result.stderr:
+                error_msg += f". Error: {result.stderr}"
+            if result.stdout:
+                error_msg += f". Output: {result.stdout}"
+            logger.error(error_msg)
+            raise RuntimeError(error_msg)
+            
+        if result.stdout:
+            logger.info(f"Oemer output: {result.stdout}")
+            
+    except subprocess.TimeoutExpired:
+        error_msg = "Oemer processing timed out after 10 minutes"
+        logger.error(error_msg)
+        raise RuntimeError(error_msg)
+    except FileNotFoundError:
+        error_msg = "Oemer command not found. Please ensure Oemer is installed correctly."
+        logger.error(error_msg)
+        raise RuntimeError(error_msg)
 
-    if result.returncode != 0:
-        raise RuntimeError(f"Oemer failed: {result.stderr}")
-
-    # Step 4: Locate the generated MusicXML file
+    # Step 5: Locate the generated MusicXML file
+    logger.info("Searching for generated MusicXML file...")
     musicxml_path = None
-    for file in os.listdir(output_dir):
-        if file.endswith(".musicxml"):
-            musicxml_path = os.path.join(output_dir, file)
-            break
+    
+    try:
+        output_files = os.listdir(output_dir)
+        logger.info(f"Files in output directory: {output_files}")
+        
+        for file in output_files:
+            if file.endswith(".musicxml"):
+                musicxml_path = os.path.join(output_dir, file)
+                logger.info(f"Found MusicXML file: {musicxml_path}")
+                break
+    except Exception as e:
+        logger.error(f"Error reading output directory: {e}")
+        raise RuntimeError(f"Could not read output directory: {e}")
 
     if not musicxml_path:
-        raise FileNotFoundError("No MusicXML file generated by Oemer.")
+        error_msg = f"No MusicXML file generated by Oemer. Available files: {output_files}"
+        logger.error(error_msg)
+        raise FileNotFoundError(error_msg)
 
-    # Step 5: Convert MusicXML to MIDI
-    score = converter.parse(musicxml_path)
-    midi_path = musicxml_path.replace(".musicxml", ".mid")
-    score.write('midi', fp=midi_path)
-
-    return midi_path
+    # Step 6: Convert MusicXML to MIDI
+    logger.info("Converting MusicXML to MIDI...")
+    try:
+        score = converter.parse(musicxml_path)
+        midi_path = musicxml_path.replace(".musicxml", ".mid")
+        score.write('midi', fp=midi_path)
+        logger.info(f"MIDI file generated successfully: {midi_path}")
+        
+        # Verify the MIDI file was created and has content
+        if not os.path.exists(midi_path):
+            raise FileNotFoundError("MIDI file was not created")
+            
+        file_size = os.path.getsize(midi_path)
+        if file_size == 0:
+            raise RuntimeError("Generated MIDI file is empty")
+            
+        logger.info(f"MIDI file size: {file_size} bytes")
+        return midi_path
+        
+    except Exception as e:
+        logger.error(f"Error converting MusicXML to MIDI: {e}")
+        raise RuntimeError(f"Failed to convert MusicXML to MIDI: {e}")
