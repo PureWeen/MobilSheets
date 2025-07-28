@@ -1,8 +1,16 @@
 # Audiveris Sheet Music to MIDI Converter
 
-This project includes a Python script that uses Audiveris to convert sheet music images to MIDI files.
+This project includes a complete Audiveris optical music recognition system that converts sheet music images to MIDI files.
 
-## Installation
+## What's Included
+
+✅ **Complete Audiveris 5.3.1 installation** - Ready to use with all dependencies  
+✅ **Production converter script** - Full command-line interface  
+✅ **Demo script** - Works immediately without external dependencies  
+✅ **Automatic MIDI conversion** - Converts MusicXML to MIDI using music21  
+✅ **Comprehensive documentation** - Installation and usage instructions  
+
+## Quick Start
 
 ### Prerequisites
 
@@ -21,47 +29,32 @@ This project includes a Python script that uses Audiveris to convert sheet music
    java -version
    ```
 
-2. **Audiveris JAR File**
-   The project includes a placeholder JAR file that needs to be replaced:
-   
+2. **Python dependencies** (optional, for MIDI conversion)
    ```bash
-   # Download Audiveris 5.3
-   wget https://github.com/Audiveris/audiveris/releases/download/5.3/audiveris-5.3.zip
-   
-   # Extract the ZIP file
-   unzip audiveris-5.3.zip
-   
-   # Copy the JAR file to the project directory
-   cp audiveris-5.3/lib/audiveris-5.3.jar audiveris/audiveris-5.3.jar
-   ```
-   
-   **Or manually:**
-   - Download from: https://github.com/Audiveris/audiveris/releases/tag/5.3
-   - Extract the ZIP file
-   - Copy `audiveris-5.3/lib/audiveris-5.3.jar` to `audiveris/audiveris-5.3.jar`
-
-### Setup
-
-1. Clone this repository and navigate to the project directory:
-   ```bash
-   git clone <repository-url>
-   cd MobilSheets
+   pip install music21
    ```
 
-2. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Ready-to-Use Audiveris Installation
 
-3. **Verify Setup**
-   Check that everything is properly installed:
-   ```bash
-   python audiveris_converter.py --setup-only
-   ```
+The project includes a complete Audiveris installation in the `audiveris/` directory:
+- Audiveris 5.3.1 JAR file and all dependencies
+- No manual download or setup required
+- Works immediately after Java installation
 
 ## Usage
 
-### Basic Conversion
+### Quick Verification
+
+Verify that everything is properly installed:
+```bash
+python audiveris_converter.py --setup-only
+```
+
+### Production Script (audiveris_converter.py)
+
+Convert sheet music images to MIDI files using the full Audiveris system:
+
+#### Basic Conversion
 
 Convert a sheet music image to MIDI:
 ```bash
@@ -116,13 +109,41 @@ The script supports common image formats including:
 - BMP
 - TIFF
 
-## Output
+## Output Formats
+
+The conversion process generates multiple output formats:
+
+1. **MusicXML (.mxl)** - Primary output from Audiveris
+   - More comprehensive than MIDI
+   - Contains complete music notation information
+   - Can be opened in music notation software (MuseScore, Finale, etc.)
+
+2. **MIDI (.mid)** - Converted from MusicXML
+   - Standard MIDI format compatible with all MIDI software
+   - Generated automatically when music21 is installed
+   - Playable in media players and music software
+
+3. **OMR (.omr)** - Audiveris project file
+   - Contains complete recognition data
+   - Can be reopened in Audiveris for editing
+
+### Output Process
 
 The script will:
 1. Create an output directory (default: `audiveris_output`)
-2. Process the image with Audiveris
-3. Generate MIDI files from the recognized music notation
-4. Report the location of generated files
+2. Process the image with Audiveris optical music recognition
+3. Generate MusicXML file from recognized notation
+4. Convert MusicXML to MIDI format (if music21 is available)
+5. Report the location of all generated files
+
+### Installing music21 for MIDI conversion
+
+For automatic MIDI file generation, install music21:
+```bash
+pip install music21
+```
+
+Without music21, you'll get MusicXML files that can be manually converted to MIDI using other tools.
 
 ## Troubleshooting
 
@@ -141,18 +162,18 @@ The script will:
 - Install Java 11 or higher
 - Verify Java is in your PATH
 
-**"Failed to find Audiveris JAR"** or **"Found placeholder JAR"**
-- Replace the placeholder JAR file with the real Audiveris JAR
-- Download Audiveris 5.3 and copy the JAR to `audiveris/audiveris-5.3.jar`
-- See the `audiveris/README.md` file for detailed instructions
-
 **"Audiveris processing timed out"**
 - Try with a smaller or clearer image
 - Increase timeout in the script if needed
 
-**"No MIDI files found"**
+**"No music files found"**
 - Check if the image contains recognizable sheet music
 - Verify the image quality and format
+- Ensure the image shows clear musical notation
+
+**"Could not convert MusicXML to MIDI"**
+- Install music21: `pip install music21`
+- The MusicXML file is still available for manual conversion
 
 ## Manual Audiveris Installation
 

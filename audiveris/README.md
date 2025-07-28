@@ -1,31 +1,44 @@
-# Audiveris JAR Installation
+# Audiveris Integration for MobilSheets
 
-This directory should contain the Audiveris JAR file for the converter to work.
+This directory contains the complete Audiveris optical music recognition system for converting sheet music images to MIDI and MusicXML files.
 
-## Required File
+## What's Included
 
-Place the Audiveris JAR file here as:
-- `audiveris-5.3.jar` (recommended)
-- OR `audiveris.jar` (alternative name)
+- **audiveris-5.3.jar** - The main Audiveris application JAR file
+- **lib/** - Complete set of dependency JAR files required by Audiveris
+- **README.md** - This documentation file
 
-## How to Get Audiveris JAR
+## How It Works
 
-1. Download Audiveris 5.3 from: https://github.com/Audiveris/audiveris/releases/tag/5.3
-2. Extract the downloaded ZIP file
-3. Copy the JAR file from `audiveris-5.3/lib/audiveris-5.3.jar` to this directory
-4. Rename it to `audiveris-5.3.jar` or `audiveris.jar`
+The bundled Audiveris installation includes:
 
-## Verification
+1. **Audiveris 5.3.1** - Open-source optical music recognition engine
+2. **Complete dependency libraries** - All required JAR files for full functionality
+3. **Ready-to-use setup** - No additional downloads or manual installation required
 
-After placing the JAR file, you can verify it works by running:
-```bash
-python audiveris_converter.py --setup-only
-```
+## Usage
 
-## Expected Structure
+The Audiveris installation is automatically detected and used by:
 
-```
-audiveris/
-├── README.md (this file)
-└── audiveris-5.3.jar (the Audiveris JAR file you need to add)
-```
+- `audiveris_converter.py` - Production script with full Audiveris integration
+- `audiveris_demo.py` - Demo script that works with or without Audiveris
+
+## Technical Details
+
+- **Java Version**: Requires Java 11 or higher (OpenJDK 17 recommended)
+- **Main Class**: `org.audiveris.omr.Main`
+- **Dependencies**: All required libraries are included in the `lib/` directory
+- **Output Formats**: 
+  - MusicXML (.mxl) - Primary output format (more comprehensive than MIDI)
+  - MIDI (.mid) - Generated via music21 conversion from MusicXML
+
+## File Information
+
+- **audiveris-5.3.jar**: 5.2 MB - Main application
+- **lib/ directory**: ~150 MB total - Complete dependency set including:
+  - Tesseract OCR integration
+  - Image processing libraries
+  - Music notation processing
+  - Export/import functionality
+
+This bundled installation ensures the scripts work immediately without requiring users to download, extract, or configure Audiveris manually.

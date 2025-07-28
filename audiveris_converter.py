@@ -128,15 +128,32 @@ class AudiverisConverter:
         print(f"Output directory: {output_dir}")
         
         try:
-            # Audiveris command line arguments
-            cmd = [
-                "java",
-                "-jar", self.audiveris_path,
-                "-batch",  # Run in batch mode
-                "-export",  # Export results
-                "-output", output_dir,  # Output directory
-                input_path  # Input image
-            ]
+            # Check if we have the full lib directory or just the JAR
+            audiveris_dir = os.path.dirname(self.audiveris_path)
+            lib_dir = os.path.join(audiveris_dir, "lib")
+            
+            if os.path.exists(lib_dir):
+                # Use classpath with all JARs from lib directory
+                classpath = os.path.join(lib_dir, "*")
+                cmd = [
+                    "java",
+                    "-cp", classpath,
+                    "org.audiveris.omr.Main",
+                    "-batch",  # Run in batch mode
+                    "-export",  # Export results
+                    "-output", output_dir,  # Output directory
+                    input_path  # Input image
+                ]
+            else:
+                # Fallback to single JAR (if it has a manifest)
+                cmd = [
+                    "java",
+                    "-jar", self.audiveris_path,
+                    "-batch",  # Run in batch mode
+                    "-export",  # Export results
+                    "-output", output_dir,  # Output directory
+                    input_path  # Input image
+                ]
             
             print(f"Running command: {' '.join(cmd)}")
             
@@ -151,20 +168,32 @@ class AudiverisConverter:
             if result.returncode == 0:
                 print("✓ Audiveris processing completed successfully")
                 
-                # Look for generated MIDI files
+                # Look for generated files
                 midi_files = []
+                musicxml_files = []
                 for root, dirs, files in os.walk(output_dir):
                     for file in files:
                         if file.lower().endswith(('.mid', '.midi')):
                             midi_files.append(os.path.join(root, file))
+                        elif file.lower().endswith(('.mxl', '.musicxml', '.xml')):
+                            musicxml_files.append(os.path.join(root, file))
                 
                 if midi_files:
                     print(f"✓ Generated MIDI files:")
                     for midi_file in midi_files:
                         print(f"  - {midi_file}")
                     return midi_files[0]  # Return the first MIDI file found
+                elif musicxml_files:
+                    print(f"✓ Generated MusicXML files:")
+                    for xml_file in musicxml_files:
+                        print(f"  - {xml_file}")
+                    print("\nNote: Audiveris generates MusicXML format, which is more comprehensive than MIDI.")
+                    print("MusicXML files can be opened with music notation software like MuseScore.")
+                    
+                    # Try to convert MusicXML to MIDI if possible
+                    return self._convert_musicxml_to_midi(musicxml_files[0], output_dir)
                 else:
-                    print("⚠ No MIDI files found in output directory")
+                    print("⚠ No music files found in output directory")
                     # List all files in output directory for debugging
                     print("Files in output directory:")
                     for root, dirs, files in os.walk(output_dir):
@@ -184,6 +213,41 @@ class AudiverisConverter:
         except Exception as e:
             print(f"✗ Error running Audiveris: {e}")
             return None
+    
+    def _convert_musicxml_to_midi(self, musicxml_path, output_dir):
+        """Convert MusicXML to MIDI using music21 if available."""
+        try:
+            # Try to import music21 for MusicXML to MIDI conversion
+            try:
+                from music21 import converter, midi
+                print("Attempting to convert MusicXML to MIDI using music21...")
+                
+                # Load the MusicXML file
+                score = converter.parse(musicxml_path)
+                
+                # Generate MIDI file path
+                base_name = os.path.splitext(os.path.basename(musicxml_path))[0]
+                midi_path = os.path.join(output_dir, f"{base_name}.mid")
+                
+                # Convert to MIDI
+                midi_file = midi.translate.streamToMidiFile(score)
+                midi_file.open(midi_path, 'wb')
+                midi_file.write()
+                midi_file.close()
+                
+                print(f"✓ Converted to MIDI: {midi_path}")
+                return midi_path
+                
+            except ImportError:
+                print("Note: Install music21 for automatic MusicXML to MIDI conversion:")
+                print("  pip install music21")
+                print(f"✓ MusicXML file available: {musicxml_path}")
+                return musicxml_path
+                
+        except Exception as e:
+            print(f"⚠ Could not convert MusicXML to MIDI: {e}")
+            print(f"✓ MusicXML file available: {musicxml_path}")
+            return musicxml_path
     
     def setup(self):
         """Set up Audiveris environment."""

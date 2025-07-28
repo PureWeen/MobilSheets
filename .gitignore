@@ -55,6 +55,8 @@ outputs/
 # Audiveris installation
 audiveris-*/
 audiveris.jar
+# But allow the bundled audiveris lib directory
+!audiveris/lib/
 
 # MIDI files (except test samples)
 *.mid
