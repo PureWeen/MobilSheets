@@ -21,10 +21,24 @@ This project includes a Python script that uses Audiveris to convert sheet music
    java -version
    ```
 
-2. **Audiveris**
-   - Download from: https://github.com/Audiveris/audiveris/releases
+2. **Audiveris JAR File**
+   The project includes a placeholder JAR file that needs to be replaced:
+   
+   ```bash
+   # Download Audiveris 5.3
+   wget https://github.com/Audiveris/audiveris/releases/download/5.3/audiveris-5.3.zip
+   
+   # Extract the ZIP file
+   unzip audiveris-5.3.zip
+   
+   # Copy the JAR file to the project directory
+   cp audiveris-5.3/lib/audiveris-5.3.jar audiveris/audiveris-5.3.jar
+   ```
+   
+   **Or manually:**
+   - Download from: https://github.com/Audiveris/audiveris/releases/tag/5.3
    - Extract the ZIP file
-   - Note the location of the `audiveris.jar` file
+   - Copy `audiveris-5.3/lib/audiveris-5.3.jar` to `audiveris/audiveris-5.3.jar`
 
 ### Setup
 
@@ -39,12 +53,11 @@ This project includes a Python script that uses Audiveris to convert sheet music
    pip install -r requirements.txt
    ```
 
-3. Place the Audiveris JAR file in one of these locations:
-   - `audiveris-5.3/lib/audiveris-5.3.jar`
-   - `audiveris/lib/audiveris-5.3.jar`
-   - `audiveris.jar`
-   - `/usr/local/lib/audiveris.jar`
-   - `/opt/audiveris/audiveris.jar`
+3. **Verify Setup**
+   Check that everything is properly installed:
+   ```bash
+   python audiveris_converter.py --setup-only
+   ```
 
 ## Usage
 
@@ -128,9 +141,10 @@ The script will:
 - Install Java 11 or higher
 - Verify Java is in your PATH
 
-**"Failed to find Audiveris JAR"**
-- Download Audiveris from GitHub releases
-- Place the JAR file in one of the expected locations
+**"Failed to find Audiveris JAR"** or **"Found placeholder JAR"**
+- Replace the placeholder JAR file with the real Audiveris JAR
+- Download Audiveris 5.3 and copy the JAR to `audiveris/audiveris-5.3.jar`
+- See the `audiveris/README.md` file for detailed instructions
 
 **"Audiveris processing timed out"**
 - Try with a smaller or clearer image

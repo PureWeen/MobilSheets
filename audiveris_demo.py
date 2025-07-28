@@ -137,7 +137,9 @@ Demo Features:
         print(f"📁 Location: {midi_file}")
         print(f"🎵 Content: C major scale (demo)")
         print("\n💡 Note: This is a demo. For real conversion:")
-        print("   Use audiveris_converter.py with actual Audiveris installation")
+        print("   1. Install Java 11+")
+        print("   2. Get the Audiveris JAR file (see audiveris/README.md)")
+        print("   3. Use: python audiveris_converter.py <image_file>")
         
         return 0
         

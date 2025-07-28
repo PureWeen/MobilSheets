@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This is a placeholder for the Audiveris JAR file.
+# 
+# To make the audiveris_converter.py script work, you need to:
+#
+# 1. Download Audiveris 5.3 from:
+#    https://github.com/Audiveris/audiveris/releases/tag/5.3
+#
+# 2. Extract the ZIP file
+#
+# 3. Replace this file with the actual JAR file:
+#    audiveris-5.3/lib/audiveris-5.3.jar
+#
+# 4. Rename it to: audiveris-5.3.jar
+
+echo "ERROR: This is a placeholder file."
+echo "Please replace this with the actual Audiveris JAR file."
+echo "See audiveris/README.md for instructions."
+exit 1

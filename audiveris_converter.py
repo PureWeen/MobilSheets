@@ -35,6 +35,10 @@ class AudiverisConverter:
     AUDIVERIS_URL = f"https://github.com/Audiveris/audiveris/releases/download/{AUDIVERIS_VERSION}/audiveris-{AUDIVERIS_VERSION}.zip"
     AUDIVERIS_DIR = "audiveris"
     POSSIBLE_JAR_PATHS = [
+        # Bundled JAR files (preferred)
+        f"audiveris/audiveris-{AUDIVERIS_VERSION}.jar",
+        "audiveris/audiveris.jar",
+        # Standard installation paths
         f"audiveris-{AUDIVERIS_VERSION}/lib/audiveris-{AUDIVERIS_VERSION}.jar",
         f"audiveris/lib/audiveris-{AUDIVERIS_VERSION}.jar",
         "audiveris.jar",
@@ -65,6 +69,15 @@ class AudiverisConverter:
         """Find Audiveris JAR file in common locations."""
         for jar_path in self.POSSIBLE_JAR_PATHS:
             if os.path.exists(jar_path):
+                # Check if it's our placeholder file
+                if jar_path.startswith("audiveris/") and os.path.getsize(jar_path) < 1000:
+                    # This is likely our placeholder file
+                    with open(jar_path, 'r') as f:
+                        content = f.read()
+                        if "placeholder" in content.lower():
+                            print(f"⚠ Found placeholder JAR at {jar_path}")
+                            continue
+                
                 print(f"✓ Found Audiveris JAR at {jar_path}")
                 return jar_path
         return None
@@ -76,43 +89,23 @@ class AudiverisConverter:
         if existing_jar:
             return existing_jar
             
-        print(f"Downloading Audiveris {self.AUDIVERIS_VERSION}...")
-        print("Note: If download fails, please install manually from:")
-        print(f"https://github.com/Audiveris/audiveris/releases")
-        
-        try:
-            zip_path = f"audiveris-{self.AUDIVERIS_VERSION}.zip"
-            
-            # Download the zip file
-            print(f"Downloading from {self.AUDIVERIS_URL}")
-            urllib.request.urlretrieve(self.AUDIVERIS_URL, zip_path)
-            
-            # Extract the zip file
-            print("Extracting Audiveris...")
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall('.')
-            
-            # Clean up zip file
-            os.remove(zip_path)
-            
-            # Find the extracted JAR
-            jar_path = self.find_audiveris_jar()
-            if jar_path:
-                print(f"✓ Audiveris downloaded and extracted to {jar_path}")
-                return jar_path
-            else:
-                print("✗ Failed to find Audiveris JAR after extraction")
-                return None
-                
-        except Exception as e:
-            print(f"✗ Failed to download Audiveris: {e}")
-            print("\nMANUAL INSTALLATION REQUIRED:")
-            print("1. Download Audiveris from: https://github.com/Audiveris/audiveris/releases")
-            print("2. Extract the ZIP file")
-            print("3. Place the audiveris.jar file in one of these locations:")
-            for path in self.POSSIBLE_JAR_PATHS:
-                print(f"   - {path}")
-            return None
+        print("❌ No Audiveris JAR file found!")
+        print("\n" + "="*60)
+        print("AUDIVERIS JAR INSTALLATION REQUIRED")
+        print("="*60)
+        print("The bundled Audiveris JAR file is missing or is a placeholder.")
+        print("\nTo fix this:")
+        print("1. Download Audiveris 5.3 from:")
+        print("   https://github.com/Audiveris/audiveris/releases/tag/5.3")
+        print("2. Extract the downloaded audiveris-5.3.zip file")
+        print("3. Copy the JAR file to this location:")
+        print("   audiveris/audiveris-5.3.jar")
+        print("   (from audiveris-5.3/lib/audiveris-5.3.jar in the extracted folder)")
+        print("\nAlternatively, you can place it in any of these locations:")
+        for path in self.POSSIBLE_JAR_PATHS:
+            print(f"   - {path}")
+        print("\n" + "="*60)
+        return None
     
     def convert_image_to_midi(self, input_path, output_dir=None):
         """Convert sheet music image to MIDI using Audiveris."""
