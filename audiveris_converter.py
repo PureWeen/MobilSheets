@@ -134,7 +134,7 @@ class AudiverisConverter:
             
             if os.path.exists(lib_dir):
                 # Use classpath with all JARs from lib directory
-                classpath = os.path.join(lib_dir, "*")
+                classpath = f"{self.audiveris_path}:{lib_dir}/*"
                 cmd = [
                     "java",
                     "-cp", classpath,
