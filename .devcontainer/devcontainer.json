@@ -1,0 +1,15 @@
+{
+  "name": "MobilSheets",
+  "image": "mcr.microsoft.com/devcontainers/python:3.8",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "postCreateCommand": "sudo apt update && sudo apt install -y tesseract-ocr libtesseract-dev libpng-dev libjpeg-dev && cd backend && python3 -m venv venv && . venv/bin/activate && pip install -r requirements.txt",
+  "forwardPorts": [8080, 3000],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}

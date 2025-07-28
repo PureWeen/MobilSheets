@@ -1,17 +1,16 @@
-import subprocess
 import os
+from music21 import converter
 
 OUTPUT_FOLDER = 'output'
 MIDI_PATH = os.path.join(OUTPUT_FOLDER, 'output.mid')
 
 def convert_to_midi(musicxml_path):
-    # Replace this with the actual command you want to run to convert MusicXML to MIDI
-    cmd = [
-        'musescore',  # or any other tool that converts MusicXML to MIDI
-        musicxml_path,
-        '-o', MIDI_PATH
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        raise Exception(f'MIDI conversion failed: {result.stderr}')
-    return MIDI_PATH
+    try:
+        # Parse MusicXML file
+        score = converter.parse(musicxml_path)
+        # Write to MIDI
+        os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+        score.writeMidi(MIDI_PATH)
+        return MIDI_PATH
+    except Exception as e:
+        raise Exception(f'MIDI conversion failed: {str(e)}')
